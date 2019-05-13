@@ -98,6 +98,7 @@ class Graph:
         """
         # Create an empty Queue
         q = Queue()
+        path = Queue()
         # Create an empty Visited set
         visited = set()
         # Add the starting vertex to the queue
@@ -109,15 +110,23 @@ class Graph:
             # If it has not been visited...
             if v not in visited and v != destination_vertex:
                 # Mark it as visited (print it and add it to the visited set)
-                print(v)
+                # print(v)
                 visited.add(v)
+                path.enqueue(v)
                 # Then enqueue each of its neighbors in the queue
+
+                # check the next neighbors of neighbor for the destination value
+                # If it equals the destination value, add the neighber
+                # and add the next_neighbor/destination value to the path queue
                 for neighbor in self.vertices[v]:
-                    q.enqueue(neighbor)
-            elif v not in visited and v == destination_vertex:
-                print('END')
-                # print(q)
-                print(visited)
+                    for next_neighbor in self.vertices[neighbor]:
+                        if next_neighbor == destination_vertex:
+                            path.enqueue(neighbor)
+                            path.enqueue(next_neighbor)
+                            print(path.queue)
+                            break
+                    else:
+                        q.enqueue(neighbor)
 
     def dfs(self, starting_vertex, destination_vertex):
         """
