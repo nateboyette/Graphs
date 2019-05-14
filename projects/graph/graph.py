@@ -99,37 +99,32 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
+
         # Create an empty Queue
         q = Queue()
-        path = Queue()
         # Create an empty Visited set
         visited = set()
-        # Add the starting vertex to the queue
-        q.enqueue(starting_vertex)
+        # Add A PATH TO the starting vertex to the queue
+        q.enqueue([starting_vertex])
         # While the queue is not empty...
         while q.size() > 0:
-            # Dequeue the first vertex
-            v = q.dequeue()
-            # If it has not been visited...
-            if v not in visited and v != destination_vertex:
-                # Mark it as visited (print it and add it to the visited set)
-                # print(v)
-                visited.add(v)
-                path.enqueue(v)
-                # Then enqueue each of its neighbors in the queue
+            # Dequeue the first PATH
+            path = q.dequeue()
+            # Grab the last vertex of the path
+            v = path[-1]
+            # Check if it's our destination
+            if v == destination_vertex:
+                return path
 
-                # check the next neighbors of neighbor for the destination value
-                # If it equals the destination value, add the neighber
-                # and add the next_neighbor/destination value to the path queue
+            # If it has not been visited...
+            if v not in visited:
+                # Mark it as visited (print it and add it to the visited set)
+                visited.add(v)
+                # Then enqueue each of its neighbors in the queue
                 for neighbor in self.vertices[v]:
-                    for next_neighbor in self.vertices[neighbor]:
-                        if next_neighbor == destination_vertex:
-                            path.enqueue(neighbor)
-                            path.enqueue(next_neighbor)
-                            print(path.queue)
-                            return
-                    else:
-                        q.enqueue(neighbor)
+                    path_copy = path.copy()
+                    path_copy.append(neighbor)
+                    q.enqueue(path_copy)
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -137,37 +132,32 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        # Create an empty Stack
+
+        # Create an empty Queue
         s = Stack()
         # Create an empty Visited set
         visited = set()
-        path = set()
-        # Push the starting vertex to the stack
-        s.push(starting_vertex)
-        path.add(starting_vertex)
-        # While the Stack is not empty...
+        # Add A PATH TO the starting vertex to the queue
+        s.push([starting_vertex])
+        # While the queue is not empty...
         while s.size() > 0:
-            # Pop the first vertex
-            v = s.pop()
+            # Dequeue the first PATH
+            path = s.pop()
+            # Grab the last vertex of the path
+            v = path[-1]
+            # Check if it's our destination
+            if v == destination_vertex:
+                return path
+
             # If it has not been visited...
-            if v not in visited and v != destination_vertex:
+            if v not in visited:
                 # Mark it as visited (print it and add it to the visited set)
-                print(v)
                 visited.add(v)
-                path.add(v)
-                # Then push each of its neighbors onto the Stack
+                # Then enqueue each of its neighbors in the queue
                 for neighbor in self.vertices[v]:
-                    for next_neighbor in self.vertices[neighbor]:
-                        if next_neighbor == destination_vertex:
-                            # path.add(v)
-                            path.add(neighbor)
-                            path.add(next_neighbor)
-                            # path.add(destination_vertex)
-                            print(path)
-                            # return
-                    else:
-                        # path.add(neighbor)
-                        s.push(neighbor)
+                    path_copy = path.copy()
+                    path_copy.append(neighbor)
+                    s.push(path_copy)
 
 
 if __name__ == '__main__':
@@ -237,14 +227,14 @@ print(graph.vertices)
     Valid BFS path:
         [1, 2, 4, 6]
     '''
-# print(graph.bfs(1, 6))
+print(graph.bfs(1, 6))
 
 '''
     Valid DFS paths:
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-print(graph.dfs(1, 6))
+# print(graph.dfs(1, 5))
 
 
 end_time = time()
