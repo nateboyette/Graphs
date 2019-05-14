@@ -2,6 +2,9 @@
 Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
+from time import time
+
+start_time = time()
 
 
 class Graph:
@@ -124,7 +127,7 @@ class Graph:
                             path.enqueue(neighbor)
                             path.enqueue(next_neighbor)
                             print(path.queue)
-                            break
+                            return
                     else:
                         q.enqueue(neighbor)
 
@@ -134,7 +137,37 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        # Create an empty Stack
+        s = Stack()
+        # Create an empty Visited set
+        visited = set()
+        path = set()
+        # Push the starting vertex to the stack
+        s.push(starting_vertex)
+        path.add(starting_vertex)
+        # While the Stack is not empty...
+        while s.size() > 0:
+            # Pop the first vertex
+            v = s.pop()
+            # If it has not been visited...
+            if v not in visited and v != destination_vertex:
+                # Mark it as visited (print it and add it to the visited set)
+                print(v)
+                visited.add(v)
+                path.add(v)
+                # Then push each of its neighbors onto the Stack
+                for neighbor in self.vertices[v]:
+                    for next_neighbor in self.vertices[neighbor]:
+                        if next_neighbor == destination_vertex:
+                            # path.add(v)
+                            path.add(neighbor)
+                            path.add(next_neighbor)
+                            # path.add(destination_vertex)
+                            print(path)
+                            # return
+                    else:
+                        # path.add(neighbor)
+                        s.push(neighbor)
 
 
 if __name__ == '__main__':
@@ -158,22 +191,23 @@ if __name__ == '__main__':
     graph.add_edge(2, 3)
     graph.add_edge(4, 6)
 
-    '''
+
+'''
     Should print:
         {1: {2}, 2: {3, 4}, 3: {5}, 4: {6, 7}, 5: {3}, 6: {3}, 7: {1, 6}}
     '''
-    print(graph.vertices)
+print(graph.vertices)
 
-    '''
+'''
     Valid DFT paths:
         1, 2, 3, 5, 4, 6, 7
         1, 2, 3, 5, 4, 7, 6
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
-    # graph.dft(1)
+# graph.dft(1)
 
-    '''
+'''
     Valid BFT paths:
         1, 2, 3, 4, 5, 6, 7
         1, 2, 3, 4, 5, 7, 6
@@ -188,26 +222,31 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
-    # graph.bft(1)
+# graph.bft(1)
 
-    '''
+'''
     Valid DFT recursive paths:
         1, 2, 3, 5, 4, 6, 7
         1, 2, 3, 5, 4, 7, 6
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
-    # graph.dft_recursive(1)
+# graph.dft_recursive(1)
 
-    '''
+'''
     Valid BFS path:
         [1, 2, 4, 6]
     '''
-    print(graph.bfs(1, 6))
+# print(graph.bfs(1, 6))
 
-    '''
+'''
     Valid DFS paths:
         [1, 2, 4, 6]
         [1, 2, 4, 7, 6]
     '''
-    # print(graph.dfs(1, 6))
+print(graph.dfs(1, 6))
+
+
+end_time = time()
+
+print(end_time - start_time)
