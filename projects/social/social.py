@@ -117,7 +117,6 @@ class SocialGraph:
                     path_copy.append(friendship)
                     visited[v] = path.copy()
                     q.enqueue(path_copy)
-
         return visited
 
 
