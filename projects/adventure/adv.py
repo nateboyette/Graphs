@@ -36,8 +36,7 @@ traversalPath = []
 
 
 graph = {}
-# path[player.currentRoom.id] = dict.fromkeys(player.currentRoom.getExits())
-# visited.add(player.currentRoom.id)
+
 
 
 def get_inverse_direction(direction):
@@ -57,14 +56,18 @@ def bft_rooms(graph, starting_room):
     beginning from starting_vertex.
     """
     q = Queue()
+    
     # Create an empty Visited dict
     visited = set()  # Note that this is a dictionary, not a set
+    
     # Add A PATH TO the starting vertex to the queue
     pathToTraverse = []
     q.enqueue([starting_room])
+    
     # While the queue is not empty...
     while q.size() > 0:
-            # Dequeue the first PATH
+        
+        # Dequeue the first PATH
         path = q.dequeue()
         # Grab the last vertex of the path
         current_room = path[-1]
@@ -81,14 +84,12 @@ def bft_rooms(graph, starting_room):
             for room in graph[current_room]:
                 if graph[current_room][room] == "?":
                     return path
-                    # return pathToTraverse
-                    # print(f"CURRENT ROOM: {graph[current_room]}")
-                    # print(f"NEXT PATH: {room}")
-                    # player.travel(room)
-                    # traversalPath.append(room)
+                    
 
             # From current position, search the current
             # graph for the nearest room with a "?"
+            # add each step to the path list so it can 
+            # be used to traverse to the room
             for room_exit in graph[current_room]:
 
                 pathToTraverse.append(room_exit)
@@ -97,41 +98,44 @@ def bft_rooms(graph, starting_room):
                 path_copy.append(next_room)
                 q.enqueue(path_copy)
 
-                # print(f"PATH: {path}")
-                # print(f"PATH TO TRAVERSE: {pathToTraverse}")
-                # print(f"CURRENT ROOM: {current_room}")
-                # print(f"NEXT ROOM: {next_room}")
-                # visited[v] = path.copy()
-                # q.enqueue(path_copy)
-    return None
+    
 
 
-# Create starting point in graph
-# graph[player.currentRoom.id] = {}
+
 
 while len(graph) < len(roomGraph):
-    # visited = set()
+    
     currentRoomID = player.currentRoom.id
-    # Create graph from starting room
-    # previousRoomID = currentRoomID
-
+    
     # If the current room hasn't been visited yet
-    # add it to the visited set and add at to the graph
+    # add it to the visited set and add to the graph
     if currentRoomID not in graph:
         graph[currentRoomID] = {}
-        # visited.add(currentRoomID)
-
+        
+        # Mark each path with a "?" to keep track of the 
+        # rooms that haven't been searched
         for exit in player.currentRoom.getExits():
             graph[currentRoomID][exit] = "?"
-
-    # print(f"GRAPH CREATED: {graph}")
-
+ 
+    # traverse through the room graph from the starting point,
+    # creating a graph/map of each room we encounter
     for path in graph[currentRoomID]:
+
+        # If there is no valid path in the current room
+        # We've hit a dead end and need to bfs for the nearest
+        # room with an unsearched path
         if path not in graph[currentRoomID]:
             break
+
+        # If a path has a "?"
+        # Enter the room and add the new room and all
+        # of it's paths to the graph with "?"
         if graph[currentRoomID][path] == "?":
             exit_path = path
 
+            # enter the room with a "?"
+            # Add this new room to the graph if it
+            # hasn't been visited before
             if exit_path is not None:
                 traversalPath.append(exit_path)
                 player.travel(exit_path)
@@ -143,31 +147,34 @@ while len(graph) < len(roomGraph):
                     for exit in player.currentRoom.getExits():
                         graph[player.currentRoom.id][exit] = "?"
 
+            # Mark the current path and the new room's inverse path
+            # With the correct room numbers
+            # Set the current room number ID to the new room number ID
             graph[currentRoomID][exit_path] = new_roomID
             graph[new_roomID][get_inverse_direction(
                 exit_path)] = currentRoomID
             currentRoomID = new_roomID
             print(graph)
-            # break
+            
 
-    print(f"GRAPH BEFORE BFS: {graph}")
+    # After we've hit a dead end,
+    # Search for the nearest room with a "?" in the graph
+    # and return the path of directions to get there
     paths = bft_rooms(graph, currentRoomID)
 
-    print(f"PATH TO TRAVERSE: {paths}")
-    # break
-    for room_number in paths:
-        for room in graph[currentRoomID]:
-            if graph[currentRoomID][room] == room_number:
-                print("TRUE")
-                traversalPath.append(room)
-                player.travel(room)
+    # If there's a path returned from bfs
+    # use those directions to traverse to the room
+    # with an unsearched "?", enter that room and continue searching
+    if paths is not None:
+        for room_number in paths:
+            for room in graph[currentRoomID]:
+                if graph[currentRoomID][room] == room_number:
+                    traversalPath.append(room)
+                    player.travel(room)
     currentRoomID = player.currentRoom.id
-    # print(f"BFT PATH: {paths}")
+    
 
-# print(f"NEW ROOM ID: {new_roomID}")
-# print(f"CURRENT ROOM ID: {currentRoomID}")
-# print(traversalPath)
-# print(graph)
+
 
 
 # TRAVERSAL TEST
