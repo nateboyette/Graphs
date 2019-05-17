@@ -65,6 +65,7 @@ def bft_rooms(graph, starting_room):
     while q.size() > 0:
         # Dequeue the first PATH
         path = q.dequeue()
+        print(f"68 - PATH: {path}")
         # Grab the last vertex of the path
         next_room = path[-1]
 
@@ -73,64 +74,80 @@ def bft_rooms(graph, starting_room):
             # Mark it as visited (print it and add it to the visited set)
             visited.add(next_room)
             # Then enqueue each of its neighbors in the queue
-
+            exit_path = None
             for exit in graph[next_room]:
                 if exit == "?":
-                    print("TRUE")
+                    return path
 
-            for exit in graph[next_room]:
-                player.travel(exit)
+                if exit is not None:
+                    traversalPath.append(exit)
+                    player.travel(exit)
+                    new_roomID = player.currentRoom.id
+
+                    if new_roomID not in graph:
+                        graph[new_roomID] = {}
+
+                        for exit in player.currentRoom.getExits():
+                            graph[player.currentRoom.id][exit] = "?"
 
                 # path_copy = path.copy()
                 # path_copy.append(friendship)
                 # visited[v] = path.copy()
                 # q.enqueue(path_copy)
+    print(f"TRAVERSAL PATH: {traversalPath}")
     return visited
 
 
 # Create starting point in graph
-graph[player.currentRoom.id] = {}
+# graph[player.currentRoom.id] = {}
 
 while len(graph) < len(roomGraph):
-    visited = set()
+    # visited = set()
     currentRoomID = player.currentRoom.id
     # Create graph from starting room
-    previousRoomID = currentRoomID
+    # previousRoomID = currentRoomID
 
     # If the current room hasn't been visited yet
     # add it to the visited set and add at to the graph
-    if currentRoomID not in visited:
+    if currentRoomID not in graph:
         graph[currentRoomID] = {}
-        visited.add(currentRoomID)
+        # visited.add(currentRoomID)
+
         for exit in player.currentRoom.getExits():
-            graph[player.currentRoom.id][exit] = "?"
+            graph[currentRoomID][exit] = "?"
+
+    # print(f"GRAPH CREATED: {graph}")
 
     for path in graph[currentRoomID]:
+
         if graph[currentRoomID][path] == "?":
             exit_path = path
 
-    if 'n' in graph[currentRoomID] and graph[currentRoomID]['n'] == "?":
-        player.travel('n')
-        currentRoomID = player.currentRoom.id
-        =
+            if exit_path is not None:
+                traversalPath.append(exit_path)
+                player.travel(exit_path)
+                new_roomID = player.currentRoom.id
 
-        # Check if room in visited
-        # if not create room in graph
-        if currentRoomID not in visited:
-            graph[currentRoomID] = {}
-            visited.add(currentRoomID)
-            for exit in player.currentRoom.getExits():
-                graph[player.currentRoom.id][exit] = "?"
+                if new_roomID not in graph:
+                    graph[new_roomID] = {}
 
-        previousDirection = str(get_inverse_direction('n'))
-        currentDirection = 'n'
+                    for exit in player.currentRoom.getExits():
+                        graph[player.currentRoom.id][exit] = "?"
 
-        graph[currentRoomID][previousDirection] = previousRoomID
-        graph[previousRoomID][currentDirection] = currentRoomID
+            graph[currentRoomID][exit_path] = new_roomID
+            graph[new_roomID][get_inverse_direction(
+                exit_path)] = currentRoomID
+            currentRoomID = new_roomID
+            print(graph)
+            break
 
-    # bft_rooms(graph, currentRoomID)
-    # break
+    traversePath = bft_rooms(graph, currentRoomID)
 
+    print(graph)
+
+# print(f"NEW ROOM ID: {new_roomID}")
+print(f"CURRENT ROOM ID: {currentRoomID}")
+print(traversalPath)
 print(graph)
 
 
