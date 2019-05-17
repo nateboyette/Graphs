@@ -60,42 +60,47 @@ def bft_rooms(graph, starting_room):
     # Create an empty Visited dict
     visited = set()  # Note that this is a dictionary, not a set
     # Add A PATH TO the starting vertex to the queue
+    pathToTraverse = []
     q.enqueue([starting_room])
     # While the queue is not empty...
     while q.size() > 0:
-        # Dequeue the first PATH
+            # Dequeue the first PATH
         path = q.dequeue()
-        print(f"68 - PATH: {path}")
         # Grab the last vertex of the path
-        next_room = path[-1]
+        current_room = path[-1]
+        # Check if it's our destination
+        # if v == userID:
+        #     return path
 
         # If it has not been visited...
-        if next_room not in visited:
+        if current_room not in visited:
             # Mark it as visited (print it and add it to the visited set)
-            visited.add(next_room)
+            visited.add(current_room)
             # Then enqueue each of its neighbors in the queue
-            exit_path = None
-            for exit in graph[next_room]:
-                if exit == "?":
+            for room in graph[current_room]:
+                if graph[current_room][room] == "?":
                     return path
+                    # return pathToTraverse
+                    # print(f"CURRENT ROOM: {graph[current_room]}")
+                    # print(f"NEXT PATH: {room}")
+                    # player.travel(room)
+                    # traversalPath.append(room)
 
-                if exit is not None:
-                    traversalPath.append(exit)
-                    player.travel(exit)
-                    new_roomID = player.currentRoom.id
+            for room_exit in graph[current_room]:
 
-                    if new_roomID not in graph:
-                        graph[new_roomID] = {}
+                # pathToTraverse.append(room_exit)
+                next_room = graph[current_room][room_exit]
+                path_copy = path.copy()
+                path_copy.append(next_room)
+                q.enqueue(path_copy)
 
-                        for exit in player.currentRoom.getExits():
-                            graph[player.currentRoom.id][exit] = "?"
-
-                # path_copy = path.copy()
-                # path_copy.append(friendship)
+                # print(f"PATH: {path}")
+                # print(f"PATH TO TRAVERSE: {pathToTraverse}")
+                # print(f"CURRENT ROOM: {current_room}")
+                # print(f"NEXT ROOM: {next_room}")
                 # visited[v] = path.copy()
                 # q.enqueue(path_copy)
-    print(f"TRAVERSAL PATH: {traversalPath}")
-    return visited
+    return None
 
 
 # Create starting point in graph
@@ -119,7 +124,8 @@ while len(graph) < len(roomGraph):
     # print(f"GRAPH CREATED: {graph}")
 
     for path in graph[currentRoomID]:
-
+        if path not in graph[currentRoomID]:
+            break
         if graph[currentRoomID][path] == "?":
             exit_path = path
 
@@ -139,16 +145,20 @@ while len(graph) < len(roomGraph):
                 exit_path)] = currentRoomID
             currentRoomID = new_roomID
             print(graph)
-            break
+            # break
 
-    traversePath = bft_rooms(graph, currentRoomID)
+    print(f"GRAPH BEFORE BFS: {graph}")
+    paths = bft_rooms(graph, currentRoomID)
 
-    print(graph)
+    print(f"PATH TO TRAVERSE: {paths}")
+    # break
+
+    # print(f"BFT PATH: {paths}")
 
 # print(f"NEW ROOM ID: {new_roomID}")
-print(f"CURRENT ROOM ID: {currentRoomID}")
-print(traversalPath)
-print(graph)
+# print(f"CURRENT ROOM ID: {currentRoomID}")
+# print(traversalPath)
+# print(graph)
 
 
 # TRAVERSAL TEST
