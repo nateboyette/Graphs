@@ -34,7 +34,7 @@ player = Player("Name", world.startingRoom)
 
 traversalPath = []
 
-visited = set()
+
 graph = {}
 # path[player.currentRoom.id] = dict.fromkeys(player.currentRoom.getExits())
 # visited.add(player.currentRoom.id)
@@ -51,36 +51,48 @@ def get_inverse_direction(direction):
         return "w"
 
 
-def bft(self, starting_room):
+def bft_rooms(graph, starting_room):
     """
     Print each vertex in breadth-first order
     beginning from starting_vertex.
     """
-    # Create an empty Queue
     q = Queue()
-    # Create an empty Visited set
-    visited = set()
-    # Add the starting vertex to the queue
-    q.enqueue(starting_room)
+    # Create an empty Visited dict
+    visited = set()  # Note that this is a dictionary, not a set
+    # Add A PATH TO the starting vertex to the queue
+    q.enqueue([starting_room])
     # While the queue is not empty...
     while q.size() > 0:
-        # Dequeue the first vertex
-        v = q.dequeue()
+        # Dequeue the first PATH
+        path = q.dequeue()
+        # Grab the last vertex of the path
+        next_room = path[-1]
+
         # If it has not been visited...
-        if v not in visited:
+        if next_room not in visited:
             # Mark it as visited (print it and add it to the visited set)
-            print(v)
-            visited.add(v)
+            visited.add(next_room)
             # Then enqueue each of its neighbors in the queue
-            for neighbor in self.vertices[v]:
-                q.enqueue(neighbor)
+
+            for exit in graph[next_room]:
+                if exit == "?":
+                    print("TRUE")
+
+            for exit in graph[next_room]:
+                player.travel(exit)
+
+                # path_copy = path.copy()
+                # path_copy.append(friendship)
+                # visited[v] = path.copy()
+                # q.enqueue(path_copy)
+    return visited
 
 
 # Create starting point in graph
 graph[player.currentRoom.id] = {}
 
 while len(graph) < len(roomGraph):
-
+    visited = set()
     currentRoomID = player.currentRoom.id
     # Create graph from starting room
     previousRoomID = currentRoomID
@@ -93,12 +105,14 @@ while len(graph) < len(roomGraph):
         for exit in player.currentRoom.getExits():
             graph[player.currentRoom.id][exit] = "?"
 
+    for path in graph[currentRoomID]:
+        if graph[currentRoomID][path] == "?":
+            exit_path = path
+
     if 'n' in graph[currentRoomID] and graph[currentRoomID]['n'] == "?":
         player.travel('n')
         currentRoomID = player.currentRoom.id
-        print(
-            f"CHANGED ROOM ID: {currentRoomID}, PREVIOUS ID: {previousRoomID}")
-        print(graph)
+        =
 
         # Check if room in visited
         # if not create room in graph
@@ -114,8 +128,7 @@ while len(graph) < len(roomGraph):
         graph[currentRoomID][previousDirection] = previousRoomID
         graph[previousRoomID][currentDirection] = currentRoomID
 
-    print(graph)
-    print(visited)
+    # bft_rooms(graph, currentRoomID)
     # break
 
 print(graph)
